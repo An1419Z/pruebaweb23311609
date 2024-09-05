@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Integral de Servicios Académicos</title>
+    <link rel="stylesheet" href="Inicio.css">
+    <link rel="icon" href="Recursos Visuales/Logo.jpg" type="image/x-icon">
+</head>
+<body>
+    <header class="header">
+        <h2 class="title">SISTEMA INTEGRAL DE SERVICIOS ACADÉMICOS®</h2>
+    </header>
+    <div class="outer-container">
+        <div class="login-container">
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <p>USUARIO</p>
+                <input type="text" style="text-align: center;" id="usuario" placeholder="(al, dc, ad)00000000">
+                <p>CONTRASEÑA</p>
+                <input type="password" style="text-align: center;" id="contrasena">
+                <button type="submit" class="button">INICIAR SESIÓN</button>
+            </form>
+        </div>
+        <img src="Recursos Visuales/Logo.jpg" alt="Emblema SISU" class="logo">
+    </div>
+    <h6 class="register-text">¿No tienes cuenta? <a href="Inicio/Registro/Registro.php">REGISTRATE</a></h6>
+    <footer class="footer">
+        <h3 class="institution-name">Universidad Tecnológica de Ciudad Juárez©</h3>
+    </footer>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault(); // Previene la acción por defecto del formulario
+
+            var usuario = document.getElementById('usuario').value;
+            var contrasena = document.getElementById('contrasena').value;
+
+            // Enviar los datos al servidor usando fetch
+            fetch('login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'usuario=' + encodeURIComponent(usuario) + '&contrasena=' + encodeURIComponent(contrasena)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    var destino;
+                    if (data.tipoUsuario === 'al') {
+                        destino = 'Alumnos/Alumno.html';
+                    } else if (data.tipoUsuario === 'dc') {
+                        destino = 'Docentes/Docente.html';
+                    } else if (data.tipoUsuario === 'ad') {
+                        destino = 'Administrativos/Administrativos.html';
+                    } else {
+                        alert('Usuario no válido');
+                        return;
+                    }
+                    window.location.href = destino;
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
